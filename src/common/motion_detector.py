@@ -80,11 +80,13 @@ class MotionDetector:
         roi_gray = grayed[rect[1]:(rect[1] + rect[3]), rect[0]:(rect[0] + rect[2])]
         laplacian = open_cv.Laplacian(roi_gray, open_cv.CV_64F)
         logging.debug("laplacian: %s", laplacian)
-
+        
         coordinates[:, 0] = coordinates[:, 0] - rect[0]
         coordinates[:, 1] = coordinates[:, 1] - rect[1]
 
-        status = np.mean(np.abs(laplacian * self.mask[index])) < MotionDetector.LAPLACIAN
+        print(np.mean(np.abs(laplacian * self.mask[index])))
+        print(p["mean"])
+        status = np.abs(np.mean(np.abs(laplacian * self.mask[index])) - p["mean"]) < 0.3*p["mean"]
         logging.debug("status: %s", status)
 
         return status
