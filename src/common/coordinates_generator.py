@@ -10,10 +10,10 @@ class CoordinatesGenerator:
 
     def __init__(self, image, output, color):
         self.output = output
-        self.caption = image
+        self.caption = "Marque as vagas"
         self.color = color
 
-        self.image = open_cv.imread(image).copy()
+        self.image = image.copy()
         self.click_count = 0
         self.ids = 0
         self.coordinates = []

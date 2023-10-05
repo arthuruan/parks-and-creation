@@ -4,21 +4,16 @@ import yaml
 from common.take_picture import take_picture
 from common.motion_detector import MotionDetector
 
-def routine(sleep = 30, start_frame = 800):
+def routine(data_path, sleep = 30, start_frame = 800):
     try:
-        # while True:  # Run indefinitely
-            image_path = 'images/current_parking.png'
+        while True:  # Run indefinitely
+            picture = take_picture()
 
-            image_saved = take_picture(image_path)
-
-            with open(image_path, "r") as data:
-                print(data)
+            with open(data_path, "r") as data:
                 points = yaml.safe_load(data)
-                detector = MotionDetector(points, int(start_frame))
+                detector = MotionDetector(picture, points)
                 detector.detect_live_motion()
 
-            # time.sleep(sleep)  # Wait for 10 seconds before running again
+            time.sleep(sleep)  # Wait for 10 seconds before running again
     except KeyboardInterrupt:
         pass
-    # finally:
-        

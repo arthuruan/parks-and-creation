@@ -1,6 +1,6 @@
 import cv2
 
-def take_picture(image_path, cam_port = 0, wait_key = 200):
+def take_picture(cam_port = 0, wait_key = 200):
     # Initialize the camera
     cap = cv2.VideoCapture(cam_port)  # 0 indicates the default camera (you can change this to 1, 2, etc. for additional cameras)
     cv2.waitKey(wait_key)  # Wait for 1 second
@@ -15,8 +15,9 @@ def take_picture(image_path, cam_port = 0, wait_key = 200):
 
         # If the frame was read successfully, save it
         if ret:
-            cv2.imwrite(image_path, frame)
-            print("Image captured successfully as ", image_path)
+            # cv2.imwrite(image_path, frame)
+            return frame
+            # print("Image captured successfully as ", image_path)
         else:
             print("Error: Failed to capture image")
             return False
