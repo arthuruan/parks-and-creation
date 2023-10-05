@@ -9,13 +9,13 @@ class MotionDetector:
     LAPLACIAN = 1.4
     DETECT_DELAY = 1
 
-    def __init__(self, image, coordinates):
+    def __init__(self, image, coordinates, debug):
         self.image = image.copy()
+        self.debug = debug
         self.coordinates_data = coordinates
         self.contours = []
         self.bounds = []
         self.mask = []
-
 
     def detect_live_motion(self):
         coordinates_data = self.coordinates_data
@@ -60,9 +60,10 @@ class MotionDetector:
             color = COLOR_GREEN if status else COLOR_BLUE
             draw_contours(new_frame, coordinates, str(p["id"] + 1), COLOR_WHITE, color)
 
-        open_cv.imshow('Result', new_frame)
-        open_cv.waitKey(0)
-        open_cv.destroyAllWindows()        
+        if self.debug:
+            open_cv.imshow('Result', new_frame)
+            open_cv.waitKey(0)
+            open_cv.destroyAllWindows()
 
     def __apply(self, grayed, index, p):
         coordinates = self._coordinates(p)
