@@ -8,6 +8,7 @@ from common.colors import COLOR_GREEN, COLOR_WHITE, COLOR_BLUE
 class MotionDetector:
     LAPLACIAN = 1.4
     DETECT_DELAY = 1
+    COLOR_THRESHOLD = 140
 
     def __init__(self, image, coordinates, debug):
         self.image = image.copy()
@@ -77,15 +78,17 @@ class MotionDetector:
         rect = self.bounds[index]
         logging.debug("rect: %s", rect)
 
-        roi_gray = grayed[rect[1]:(rect[1] + rect[3]), rect[0]:(rect[0] + rect[2])]
-        laplacian = open_cv.Laplacian(roi_gray, open_cv.CV_64F)
-        logging.debug("laplacian: %s", laplacian)
+        roi_color = self.image[rect[1]:(rect[1] + rect[3]), rect[0]:(rect[0] + rect[2])]
+        average_color = np.mean(roi_color, axis=(0, 1))
+        logging.debug("average color: %s", average_color)
 
         coordinates[:, 0] = coordinates[:, 0] - rect[0]
         coordinates[:, 1] = coordinates[:, 1] - rect[1]
 
-        status = np.mean(np.abs(laplacian * self.mask[index])) < MotionDetector.LAPLACIAN
+        status = np.mean(average_color) > MotionDetector.COLOR_THRESHOLD
         logging.debug("status: %s", status)
+
+        print('avg', np.mean(average_color))
 
         return status
 
