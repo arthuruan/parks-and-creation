@@ -1,8 +1,9 @@
 import cv2 as open_cv
 import numpy as np
 import logging
-from drawing_utils import draw_contours
-from colors import COLOR_GREEN, COLOR_WHITE, COLOR_BLUE
+from common.drawing_utils import draw_contours
+from common.colors import COLOR_GREEN, COLOR_WHITE, COLOR_BLUE
+
 
 class MotionDetector:
     LAPLACIAN = 1.4

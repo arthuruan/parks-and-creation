@@ -1,13 +1,12 @@
-from take_picture import take_picture
-from coordinates_generator import CoordinatesGenerator
-from colors import *
+from common.take_picture import take_picture
+from common.coordinates_generator import CoordinatesGenerator
+from common.colors import *
 
 def initial_setup():
     image_path = 'images/parking.png'
     coordinates_path = 'data/coordinates.yml'
 
-    cam = take_picture(image_path)
-    image_saved = cam.take_picture()
+    image_saved = take_picture(image_path)
 
     if image_saved:
         with open(coordinates_path, "w+") as points:

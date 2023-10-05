@@ -1,9 +1,8 @@
 import cv2 as open_cv
 import numpy as np
 
-from colors import COLOR_WHITE
-from drawing_utils import draw_contours
-
+from common.colors import COLOR_WHITE
+from common.drawing_utils import draw_contours
 
 class CoordinatesGenerator:
     KEY_RESET = ord("r")
