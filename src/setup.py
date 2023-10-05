@@ -1,4 +1,4 @@
-from take_picture import TakePicture
+from take_picture import take_picture
 from coordinates_generator import CoordinatesGenerator
 from colors import *
 
@@ -6,7 +6,7 @@ def initial_setup():
     image_path = 'images/parking.png'
     coordinates_path = 'data/coordinates.yml'
 
-    cam = TakePicture(image_path)
+    cam = take_picture(image_path)
     image_saved = cam.take_picture()
 
     if image_saved:
