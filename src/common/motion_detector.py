@@ -53,13 +53,18 @@ class MotionDetector:
         new_frame = self.image.copy()
         logging.debug("new_frame: %s", new_frame)
 
+        status_group = []
+
         for index, p in enumerate(coordinates_data):
             status = self.__apply(grayed, index, p)
+            status_group.append(status)
             coordinates = self._coordinates(p)
 
             color = COLOR_GREEN if status else COLOR_BLUE
             draw_contours(new_frame, coordinates, str(p["id"] + 1), COLOR_WHITE, color)
 
+        print('Status: ', status_group)
+        
         if self.debug:
             open_cv.imshow('Result', new_frame)
             open_cv.waitKey(0)
