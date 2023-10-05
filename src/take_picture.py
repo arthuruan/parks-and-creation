@@ -1,47 +1,36 @@
-import cv2 as open_cv
-import logging
+import cv2
 
 class TakePicture:
-    LAPLACIAN = 1.4
-    DETECT_DELAY = 1
-
-    def __init__(self, image_path, cam_port = 0):
+    def __init__(self, image_path, cam_port = 0, wait_key = 200):
         self.image_path = image_path
         self.cam_port = cam_port
-
+        self.wait_key = wait_key
 
     def take_picture(self):
-        cam = open_cv.VideoCapture(self.cam_port)
-        open_cv.namedWindow(self.image_path)
+        # Initialize the camera
+        cap = cv2.VideoCapture(self.cam_port)  # 0 indicates the default camera (you can change this to 1, 2, etc. for additional cameras)
+        cv2.waitKey(self.wait_key)  # Wait for 1 second
 
+        # Check if the camera was opened successfully
+        if not cap.isOpened():
+            print("Error: Could not open the camera")
+            return False
+        else:
+            # Read a frame from the camera
+            ret, frame = cap.read()
 
-        while True:
-            result, frame = cam.read()
+            # If the frame was read successfully, save it
+            if ret:
+                cv2.imwrite(self.image_path, frame)
+                print("Image captured successfully as ", self.image_path)
+            else:
+                print("Error: Failed to capture image")
+                return False
 
-            if frame is None:
-                break
+            # Release the camera
+            cap.release()
 
-            if not result:
-                logging.error("failed to grab frame")
-                raise CaptureReadError("Error reading frame %s" % str(frame))
-            
-            open_cv.imshow(self.image_path, frame)
-
-            k = open_cv.waitKey(1)
-
-            if k == ord('q'): 
-                # writes pic to file
-                open_cv.imwrite(self.image_path, frame)
-
-                logging.debug("initial picture saved: %s", self.image_path)
-                break               
-                           
-
-        cam.release()
-        open_cv.destroyAllWindows()
+        # Close all OpenCV windows
+        cv2.destroyAllWindows()
 
         return True
-
-
-class CaptureReadError(Exception):
-    pass
