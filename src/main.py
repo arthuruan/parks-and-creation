@@ -7,6 +7,9 @@
 from setup import initial_setup
 
 def main():
+
+    # verify if there is a coordinate.yml
+
     initial_setup()
 
     # # Take picture and saves it

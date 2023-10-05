@@ -3,7 +3,7 @@ from common.coordinates_generator import CoordinatesGenerator
 from common.colors import *
 
 def initial_setup():
-    image_path = 'images/parking.png'
+    image_path = 'images/setup_parking.png'
     coordinates_path = 'data/coordinates.yml'
 
     image_saved = take_picture(image_path)
