@@ -19,16 +19,22 @@ function Dashboard() {
   return (
     <Content>
       <div>
-        <h3>Total de Vagas</h3>
         <Pie
           options={{
             plugins: {
               legend: {
-                display: false,
-                position: 'right',
+                display: true,
+                position: 'top',
                 align: 'center'
               },
-            },
+              title: {
+                display: true,
+                text: 'Total de Vagas',
+                font: {
+                  size: 16
+                }
+              },
+            },          
             borderColor: 'transparent'
           }}
 
@@ -55,7 +61,6 @@ function Dashboard() {
         />
       </div>
       <div>
-        <h3>Vagas por setor</h3>
         <Bar options={{
           responsive: true,
           plugins: {
@@ -64,7 +69,10 @@ function Dashboard() {
             },
             title: {
               display: true,
-              text: 'Chart.js Bar Chart',
+              text: 'Vagas por setor',
+              font: {
+                size: 16
+              }
             },
           },
         }} data={{
