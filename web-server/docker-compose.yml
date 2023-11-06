@@ -1,0 +1,36 @@
+version: '3'
+
+volumes:
+
+  dados:
+
+services:
+
+  postgres-parks:
+    container_name: postgres-parks-and-creation
+    image: postgres:15.1
+    volumes:
+      - dados:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=parking
+      - POSTGRES_PASSWORD=lot
+
+  backend-parks:
+    container_name: backend-agenda
+    build:
+      context: .
+    image: backend-parks
+    ports:
+      - "${API_PORT}:${API_PORT}"
+    depends_on:
+      - postgres-parks
+    environment:
+      - POSTGRES_USER=v4h
+      - POSTGRES_PASSWORD=v4h
+      - POSTGRES_DATABASE=agenda
+      - POSTGRES_HOST=postgres-agenda
+      - POSTGRES_PORT=5432
+      - API_PORT=6666
+
