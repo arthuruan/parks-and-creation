@@ -8,6 +8,14 @@ router.get('/', async (req, res) => {
   res.json(sectors);
 });
 
+// Rota para recuperar setor
+router.get('/:id', async (req, res) => {
+  const { id } = req.params;
+
+  const sector = await Sector.findByPk(id);
+  res.json(sector);
+});
+
 // Rota para criar um novo setor
 router.post('/', async (req, res) => {
   const { name } = req.body;

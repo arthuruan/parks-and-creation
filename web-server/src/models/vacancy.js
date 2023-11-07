@@ -12,17 +12,14 @@ const Vacancy = sequelize.define('Vacancy', {
   coordenates: {
     type: DataTypes.STRING,
   },
-  // sector_id: {
-  //   type: DataTypes.INTEGER,
-  //   allowNull: false,
-  // },
+  sector_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
   status: {
     type: DataTypes.STRING,
   },
 });
-
-// Relacionamento com a tabela 'sector'
-// Vacancy.belongsTo(Sector, { foreignKey: 'sector_id' });
 
 // Relacionamento com a tabela 'vacancy_history'
 Vacancy.hasMany(VacancyHistory, { as: 'histories', foreignKey: 'vacancy_id' });

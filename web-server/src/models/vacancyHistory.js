@@ -3,10 +3,10 @@ const sequelize = require('../db');
 // const Vacancy = require('./vacancy');
 
 const VacancyHistory = sequelize.define('VacancyHistory', {
-  // vacancy_id: {
-  //   type: DataTypes.INTEGER,
-  //   allowNull: false,
-  // },
+  vacancy_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
   status: {
     type: DataTypes.STRING,
   },
