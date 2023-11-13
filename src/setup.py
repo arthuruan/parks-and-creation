@@ -5,7 +5,6 @@ from common.colors import *
 def initial_setup(data_path):
     picture = take_picture()
 
-    if picture:
-        with open(data_path, "w+") as points:
-            generator = CoordinatesGenerator(picture, points, COLOR_RED)
-            generator.generate()
+    with open(data_path, "w+") as points:
+        generator = CoordinatesGenerator(picture, points, COLOR_RED)
+        generator.generate()

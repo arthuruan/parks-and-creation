@@ -9,13 +9,13 @@ class MotionDetector:
     LAPLACIAN = 1.4
     DETECT_DELAY = 1
 
-    def __init__(self, image, coordinates):
+    def __init__(self, image, coordinates, debug):
         self.image = image.copy()
+        self.debug = debug
         self.coordinates_data = coordinates
         self.contours = []
         self.bounds = []
         self.mask = []
-
 
     def detect_live_motion(self):
         coordinates_data = self.coordinates_data
@@ -53,16 +53,22 @@ class MotionDetector:
         new_frame = self.image.copy()
         logging.debug("new_frame: %s", new_frame)
 
+        status_group = []
+
         for index, p in enumerate(coordinates_data):
             status = self.__apply(grayed, index, p)
+            status_group.append(status)
             coordinates = self._coordinates(p)
 
             color = COLOR_GREEN if status else COLOR_BLUE
             draw_contours(new_frame, coordinates, str(p["id"] + 1), COLOR_WHITE, color)
 
-        open_cv.imshow('Result', new_frame)
-        open_cv.waitKey(0)
-        open_cv.destroyAllWindows()        
+        print('Status: ', status_group)
+        
+        if self.debug:
+            open_cv.imshow('Result', new_frame)
+            open_cv.waitKey(0)
+            open_cv.destroyAllWindows()
 
     def __apply(self, grayed, index, p):
         coordinates = self._coordinates(p)
@@ -74,11 +80,13 @@ class MotionDetector:
         roi_gray = grayed[rect[1]:(rect[1] + rect[3]), rect[0]:(rect[0] + rect[2])]
         laplacian = open_cv.Laplacian(roi_gray, open_cv.CV_64F)
         logging.debug("laplacian: %s", laplacian)
-
+        
         coordinates[:, 0] = coordinates[:, 0] - rect[0]
         coordinates[:, 1] = coordinates[:, 1] - rect[1]
 
-        status = np.mean(np.abs(laplacian * self.mask[index])) < MotionDetector.LAPLACIAN
+        print(np.mean(np.abs(laplacian * self.mask[index])))
+        print(p["mean"])
+        status = np.abs(np.mean(np.abs(laplacian * self.mask[index])) - p["mean"]) < 0.3*p["mean"]
         logging.debug("status: %s", status)
 
         return status

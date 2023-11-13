@@ -21,11 +21,3 @@ def take_picture(cam_port = 0, wait_key = 200):
         else:
             print("Error: Failed to capture image")
             return False
-
-        # Release the camera
-        cap.release()
-
-    # Close all OpenCV windows
-    cv2.destroyAllWindows()
-
-    return True

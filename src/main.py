@@ -6,13 +6,17 @@ from routine import routine
 def main():
     args = parse_args()
 
-    if not os.path.isfile(args.data_file):
+    data_path = args.data_file
+    debug = args.debug
+
+    if not os.path.isfile(data_path):
         return
 
     if args.config_mode:
-        initial_setup()
+        initial_setup(data_path)
+        return
 
-    routine()
+    routine(data_path, debug)
 
 
 def parse_args():
@@ -26,8 +30,14 @@ def parse_args():
     
     parser.add_argument("--data",
                         dest="data_file",
-                        default="data/coorditanes.yml",
+                        default="data/coordinates.yml",
                         help="Data file to be used with OpenCV")
+    
+    parser.add_argument("--debug",
+                        dest="debug",
+                        action=argparse.BooleanOptionalAction,
+                        default=False,
+                        help="Start debug")
 
     return parser.parse_args()
 
