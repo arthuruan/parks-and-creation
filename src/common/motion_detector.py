@@ -69,11 +69,12 @@ class MotionDetector:
             draw_contours(new_frame, coordinates, str(p["name"]), COLOR_WHITE, color)
 
         if occupied != self.occupied:
-            self.occupied = occupied
-            for pkingLot in occupied:
-                r = requests.patch(f"localhost:8080/api/vacancies/{pkingLot}", json={"status":  self.occupied})
+            diff = list(set(occupied) ^ set(self.occupied))
+            for pkingLot in diff:
+                r = requests.patch(f"localhost:8080/api/vacancies/{pkingLot}", json={"status": "occupied" if pkingLot in self.occupied else "free"})
                 if(r.status_code != 200):
                     print(f"[ERROR] Could not send parking spot {pkingLot} data!")
+            self.occupied = occupied
             print('Status: ', self.occupied)
 
         
