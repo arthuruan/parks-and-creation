@@ -4,7 +4,9 @@ import { useNavigate } from 'react-router-dom';
 
 import { HeaderContainer, LogoutButton, Title } from './styles';
 
-function Header() {
+function Header(props) {
+  const { lastUpdate } = props;
+
   const navigate = useNavigate();
   function handleLogout() {
     navigate('/');
@@ -13,6 +15,7 @@ function Header() {
   return (
     <HeaderContainer>
       <Title>Parks and Creation</Title>
+      <p>Última atualização {lastUpdate}</p>
       <LogoutButton onClick={handleLogout}>
         <Logout />
       </LogoutButton>

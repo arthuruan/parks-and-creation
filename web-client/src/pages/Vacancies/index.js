@@ -1,95 +1,38 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Typography, AccordionDetails } from "@mui/material";
 import { Container, Section, SectionsWrapper, VacancyContainer, VacancyData, Status, VacancyMainInfo } from "./styles";
 
-const sectors = ['Setor 1', 'Setor 2', 'Setor 3'];
-const vacancies = [
-  {
-    label: 'Vaga 1',
-    location: {
-      x: 102,
-      y: 200
-    },
-    occupied: false
-  },
-  {
-    label: 'Vaga 2',
-    location: {
-      x: 102,
-      y: 200
-    },
-    occupied: true
-  },
-  {
-    label: 'Vaga 3',
-    location: {
-      x: 102,
-      y: 200
-    },
-    occupied: true
-  },
-  {
-    label: 'Vaga 4',
-    location: {
-      x: 102,
-      y: 200
-    },
-    occupied: false
-  },
-  {
-    label: 'Vaga 5',
-    location: {
-      x: 102,
-      y: 200
-    },
-    occupied: false
-  },
-  {
-    label: 'Vaga 6',
-    location: {
-      x: 102,
-      y: 200
-    },
-    occupied: true
-  },
-  {
-    label: 'Vaga 7',
-    location: {
-      x: 102,
-      y: 200
-    },
-    occupied: false
-  }
-];
-
-function Vacancies() {
-  const [currentSector, setCurrentSector] = useState(0);
-
+function Vacancies(props) {
+  const { vacancies, sectors } = props;
+  
+  const [currentSector, setCurrentSector] = useState(sectors ? sectors[0].id : 1);
   function handleChangeSector(e) {
     setCurrentSector(parseInt(e.target.value));
   }
 
+  const visibleVacancies = useMemo(() => {
+    return vacancies.filter(vacancy => vacancy.sector_id === currentSector);
+  }, [currentSector, vacancies])
+
   return (
     <Container>
       <SectionsWrapper>
-        {sectors.map((sector, index) =>
-          <Section value={index} onClick={handleChangeSector} selected={Boolean(currentSector === index)}>{sector}</Section>
+        {sectors?.map((sector, index) =>
+          <Section value={sector.id} onClick={handleChangeSector} selected={Boolean(currentSector === sector.id)}>{sector.name}</Section>
         )}
       </SectionsWrapper>
       <VacancyContainer>
-        {vacancies.map(vacancy =>
+        {visibleVacancies?.map((vacancy, index) =>
           <VacancyData>
             <VacancyMainInfo>
-              <Typography>{vacancy.label}</Typography>
-              <Status active={!vacancy.occupied} />
+              <Typography>Vaga {index + 1}</Typography>
+              <Status active={vacancy.status === 'occupied'} />
             </VacancyMainInfo>
             <AccordionDetails>
               <Typography>
                 Coordenadas
                 <br />
-                X: {vacancy.location.x}
-                <br />
-                Y: {vacancy.location.y}
+                {vacancy.coordinates}
               </Typography>
             </AccordionDetails>
           </VacancyData>

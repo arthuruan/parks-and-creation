@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Pie, Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title } from 'chart.js';
 import { Content } from "./styles";
@@ -15,7 +15,39 @@ ChartJS.register(
 
 const labels = ['Setor 1', 'Setor 2', 'Setor 3'];
 
-function Dashboard() {
+function Dashboard(props) {
+  const { vacancies, sectors } = props;
+
+  const graphData = useMemo(() => {
+    let available = 0, occupied = 0;
+    let map = {};
+
+    vacancies.forEach(vacancy => {
+      const key = vacancy.sector_id;
+
+      const getMapObject = (object) => {
+        if (vacancy.status === 'occupied') {
+          object.occupied++;
+          occupied++;
+        }
+        else {
+          object.available++;
+          available++;
+        }
+
+        return object;
+      }
+
+      if (key in map) getMapObject(map[key])
+      else map[key] = getMapObject({ available: 0, occupied: 0, label: sectors.find(sector => sector.id === key).name || '' });
+    });
+
+    return {
+      pie: [occupied, available],
+      bars: map
+    };
+  }, [vacancies])
+
   return (
     <Content>
       <div>
@@ -40,11 +72,11 @@ function Dashboard() {
 
           style={{ maxHeight: 650, maxWidth: 650, alignSelf: 'center' }}
           data={{
-            labels: ['Vagas', 'Vagas Disponíveis'],
+            labels: ['Vagas Ocupadas', 'Vagas Disponíveis'],
             datasets: [
               {
                 label: 'Nº de Vagas',
-                data: [12, 10],
+                data: graphData.pie,
                 backgroundColor: [
                   'rgba(255, 99, 132, 0.2)',
                   'rgba(54, 162, 235, 0.2)',
@@ -76,16 +108,16 @@ function Dashboard() {
             },
           },
         }} data={{
-          labels,
+          labels: Object.keys(graphData.bars).map(key => graphData.bars[key].label),
           datasets: [
             {
-              label: 'Disponíveis',
-              data: [5, 2, 3],
+              label: 'Ocupadas',
+              data: Object.keys(graphData.bars).map(key => graphData.bars[key].occupied),
               backgroundColor: 'rgba(255, 99, 132, 0.5)',
             },
             {
-              label: 'Ocupadas',
-              data: [2, 7, 1],
+              label: 'Disponíveis',
+              data: Object.keys(graphData.bars).map(key => graphData.bars[key].available),
               backgroundColor: 'rgba(53, 162, 235, 0.5)',
             },
           ],
