@@ -12,6 +12,9 @@ const Vacancy = sequelize.define('Vacancy', {
   coordenates: {
     type: DataTypes.STRING,
   },
+  mean: {
+    type: DataTypes.DOUBLE,
+  },
   sector_id: {
     type: DataTypes.INTEGER,
     allowNull: false,

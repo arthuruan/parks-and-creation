@@ -27,7 +27,7 @@ router.get('/:id/history', async (req, res) => {
 
 // Rota para criar uma nova vaga
 router.post('/', async (req, res) => {
-  const { coordinates, sectorId, status } = req.body;
+  const { coordinates, sectorId, status, mean} = req.body;
 
   try {
     const vacancy = await Vacancy.create({ coordinates, sector_id: sectorId, status });
@@ -56,7 +56,7 @@ router.post('/multiples', async (req, res) => {
   try {
     await Promise.all(vacancies.map( async (vac) => {
       const { coordinates, status } = vac;
-      const vacancy = await Vacancy.create({ coordinates, sector_id: sectorId, status });
+      const vacancy = await Vacancy.create({ coordinates, sector_id: sectorId, status, mean });
       await VacancyHistory.create({vacancy_id: vacancy.id, status});
       created.push(vacancy);
     }))
@@ -70,7 +70,7 @@ router.post('/multiples', async (req, res) => {
 // Rota para atualizar uma vaga
 router.patch('/:id', async (req, res) => {
   const { id } = req.params;
-  const { coordinates, sectorId, status } = req.body;
+  const { coordinates, sectorId, status, mean } = req.body;
   let vacancy = {};
 
   try {
@@ -83,6 +83,7 @@ router.patch('/:id', async (req, res) => {
     if (coordinates) vacancy.coordinates = coordinates;
     if (sectorId) vacancy.sector_id = sectorId;
     if (status) vacancy.status = status;
+    if (mean) vacancy.mean = mean;
   
     await vacancy.save();
   } catch (error) {
@@ -111,6 +112,7 @@ router.patch('/update/multiples', async (req, res) => {
       if (coordinates) vacancy.coordinates = coordinates;
       if (sectorId) vacancy.sector_id = sectorId;
       if (status) vacancy.status = status;
+      if (mean) vacancy.mean = mean;
     
       await vacancy.save();
       updated.push(vacancy);
