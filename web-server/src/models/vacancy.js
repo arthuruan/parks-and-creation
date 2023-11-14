@@ -14,7 +14,7 @@ const Vacancy = sequelize.define('Vacancy', {
     unique: true,
     allowNull: false
   },
-  coordenates: {
+  coordinates: {
     type: DataTypes.STRING,
   },
   mean: {
