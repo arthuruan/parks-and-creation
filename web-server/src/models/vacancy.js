@@ -9,6 +9,11 @@ const Vacancy = sequelize.define('Vacancy', {
     primaryKey: true,
     autoIncrement: true,
   },
+  name: {
+    type: DataTypes.STRING,
+    unique: true,
+    allowNull: false
+  },
   coordenates: {
     type: DataTypes.STRING,
   },

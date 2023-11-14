@@ -10,27 +10,38 @@ router.get('/', async (req, res) => {
 });
 
 // Rota para recuperar vaga
-router.get('/:id', async (req, res) => {
-  const { id } = req.params;
+router.get('/:name', async (req, res) => {
+  const { name } = req.params;
 
-  const vacancy = await Vacancy.findByPk(id);
+  const vacancy = await Vacancy.findOne({ where: {name} });
   res.json(vacancy);
 });
 
 // Rota para recuperar historico da vaga
-router.get('/:id/history', async (req, res) => {
-  const { id } = req.params;
+router.get('/:name/history', async (req, res) => {
+  const { name } = req.params;
 
-  const history = await VacancyHistory.findAll({ vacancy_id: id });
+  const vacancy = await Vacancy.findOne({ where: {name} });
+  if (!vacancy) {
+    return res.status(409).json({ error: 'Vaga não existe' });
+  }
+
+  const history = await VacancyHistory.findAll({ vacancy_id: vacancy.id });
   res.json(history);
 });
 
 // Rota para criar uma nova vaga
 router.post('/', async (req, res) => {
-  const { coordinates, sectorId, status, mean} = req.body;
+  const { coordinates, sectorId, status, mean, name} = req.body;
 
   try {
-    const vacancy = await Vacancy.create({ coordinates, sector_id: sectorId, status, mean });
+    const exists = await Vacancy.findOne({ where: {name} });
+    if (exists) {
+      console.log('Vaga com esse nome já existe');
+      return res.status(409).json({ error: 'Vaga com esse nome já existe' });
+    }
+
+    const vacancy = await Vacancy.create({ coordinates, sector_id: sectorId, status, mean, name });
     await VacancyHistory.create({vacancy_id: vacancy.id, status});
     res.status(201).json(vacancy);
   } catch (e) {
@@ -55,26 +66,33 @@ router.post('/multiples', async (req, res) => {
 
   try {
     await Promise.all(vacancies.map( async (vac) => {
-      const { coordinates, status } = vac;
-      const vacancy = await Vacancy.create({ coordinates, sector_id: sectorId, status, mean });
+      const { coordinates, status, name , mean} = vac;
+
+      const exists = await Vacancy.findOne({ where: {name} });
+      if (exists) {
+        console.log('Vaga com esse nome já existe');
+        return res.status(409).json({ error: 'Vaga com esse nome já existe' });
+      }
+      const vacancy = await Vacancy.create({ coordinates, sector_id: sectorId, status, mean, name });
       await VacancyHistory.create({vacancy_id: vacancy.id, status});
       created.push(vacancy);
     }))
 
     res.status(201).json(created);
   } catch (error) {
+    console.log(error)
     res.status(500).json(error);
   }
 });
 
 // Rota para atualizar uma vaga
-router.patch('/:id', async (req, res) => {
-  const { id } = req.params;
+router.patch('/:name', async (req, res) => {
+  const { name } = req.params;
   const { coordinates, sectorId, status, mean } = req.body;
   let vacancy = {};
 
   try {
-    vacancy = await Vacancy.findByPk(id);
+    vacancy = await Vacancy.findOne({ where: {name} });
     if (status) await VacancyHistory.create({vacancy_id: id, status});
     if (!vacancy) {
       return res.status(404).json({ error: 'Vaga não encontrada' });
@@ -101,9 +119,9 @@ router.patch('/update/multiples', async (req, res) => {
   try {
 
     await Promise.all(vacancies.map(async (vac) => {
-      const { id, coordinates, sectorId, status } = vac;
+      const { name, coordinates, sectorId, status } = vac;
 
-      const vacancy = await Vacancy.findByPk(id);
+      const vacancy = await Vacancy.findOne({ where: {name} });
       if (status) await VacancyHistory.create({vacancy_id: id, status});
       if (!vacancy) {
         return res.status(404).json({ error: 'Vaga não encontrada' });
@@ -126,9 +144,9 @@ router.patch('/update/multiples', async (req, res) => {
 });
 
 // Rota para excluir uma vaga
-router.delete('/:id', async (req, res) => {
-  const { id } = req.params;
-  const vacancy = await Vacancy.findByPk(id);
+router.delete('/:name', async (req, res) => {
+  const { name } = req.params;
+  const vacancy = await Vacancy.findOne({ where: {name} });
 
   if (!vacancy) {
     return res.status(404).json({ error: 'Vaga não encontrada' });
