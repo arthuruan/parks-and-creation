@@ -17,7 +17,7 @@ function Vacancies(props) {
   return (
     <Container>
       <SectionsWrapper>
-        {sectors?.map((sector, index) =>
+        {sectors?.map((sector) =>
           <Section value={sector.id} onClick={handleChangeSector} selected={Boolean(currentSector === sector.id)}>{sector.name}</Section>
         )}
       </SectionsWrapper>

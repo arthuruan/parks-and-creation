@@ -13,8 +13,6 @@ ChartJS.register(
   Legend
 );
 
-const labels = ['Setor 1', 'Setor 2', 'Setor 3'];
-
 function Dashboard(props) {
   const { vacancies, sectors } = props;
 
@@ -46,7 +44,7 @@ function Dashboard(props) {
       pie: [occupied, available],
       bars: map
     };
-  }, [vacancies])
+  }, [vacancies, sectors])
 
   return (
     <Content>
@@ -93,35 +91,38 @@ function Dashboard(props) {
         />
       </div>
       <div>
-        <Bar options={{
-          responsive: true,
-          plugins: {
-            legend: {
-              position: 'top',
+        <Bar 
+          options={{
+            responsive: true,
+            plugins: {
+              legend: {
+                position: 'top',
+              },
+              title: {
+                display: true,
+                text: 'Vagas por setor',
+                font: {
+                  size: 16
+                }
+              },
             },
-            title: {
-              display: true,
-              text: 'Vagas por setor',
-              font: {
-                size: 16
-              }
-            },
-          },
-        }} data={{
-          labels: Object.keys(graphData.bars).map(key => graphData.bars[key].label),
-          datasets: [
-            {
-              label: 'Ocupadas',
-              data: Object.keys(graphData.bars).map(key => graphData.bars[key].occupied),
-              backgroundColor: 'rgba(255, 99, 132, 0.5)',
-            },
-            {
-              label: 'Disponíveis',
-              data: Object.keys(graphData.bars).map(key => graphData.bars[key].available),
-              backgroundColor: 'rgba(53, 162, 235, 0.5)',
-            },
-          ],
-        }} />
+          }} 
+          data={{
+            labels: Object.keys(graphData.bars).map(key => graphData.bars[key].label),
+            datasets: [
+              {
+                label: 'Ocupadas',
+                data: Object.keys(graphData.bars).map(key => graphData.bars[key].occupied),
+                backgroundColor: 'rgba(255, 99, 132, 0.5)',
+              },
+              {
+                label: 'Disponíveis',
+                data: Object.keys(graphData.bars).map(key => graphData.bars[key].available),
+                backgroundColor: 'rgba(53, 162, 235, 0.5)',
+              },
+            ],
+          }} 
+        />
       </div>
     </Content>
   );
