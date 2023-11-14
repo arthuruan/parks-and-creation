@@ -26,13 +26,13 @@ function Vacancies(props) {
           <VacancyData>
             <VacancyMainInfo>
               <Typography>Vaga {index + 1}</Typography>
-              <Status active={vacancy.status === 'occupied'} />
+              <Status active={vacancy.status === 'free'} />
             </VacancyMainInfo>
             <AccordionDetails>
               <Typography>
                 Coordenadas
                 <br />
-                {vacancy.coordinates}
+                {vacancy.coordinates.replaceAll("'", '')}
               </Typography>
             </AccordionDetails>
           </VacancyData>

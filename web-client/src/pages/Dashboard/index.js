@@ -36,8 +36,8 @@ function Dashboard(props) {
         return object;
       }
 
-      if (key in map) getMapObject(map[key])
-      else map[key] = getMapObject({ available: 0, occupied: 0, label: sectors.find(sector => sector.id === key).name || '' });
+      if (key in map) getMapObject(map[key]);
+      else map[key] = getMapObject({ available: 0, occupied: 0, label: sectors.find(sector => sector.id === key)?.name || '' });
     });
 
     return {
