@@ -38,7 +38,8 @@ class CoordinatesGenerator:
 
                 json.dump(final_json, self.output, ensure_ascii=False)
                 
-                r = requests.post("localhost:8080/api/vacancies", json=final_json)
+                r = requests.post("http://localhost:8080/api/vacancies/multiples", json=final_json)
+
                 if(r.status_code != 200):
                     print("[ERROR] Could not create parking lots!")
                 break

@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Run base migrations
+# yarn migrate
+
+# Populate database
+# yarn seed
+
+# Run aplication
+# ./build/agenda
+
+# Run aplication
+yarn prod
