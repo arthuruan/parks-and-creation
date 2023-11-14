@@ -9,12 +9,13 @@ def main():
     data_path = args.data_file
     debug = args.debug
 
-    if not os.path.isfile(data_path):
+    if args.config_mode != False:
+        initial_setup(data_path, args.config_mode)
         return
 
-    if args.config_mode:
-        initial_setup(data_path)
-        return
+    if not os.path.isfile(data_path):
+        print("[ERROR] Could not find coordinates configuration file! Run with --config {id}")
+        return   
 
     routine(data_path, debug)
 
@@ -24,13 +25,13 @@ def parse_args():
 
     parser.add_argument("--config",
                         dest="config_mode",
-                        action=argparse.BooleanOptionalAction,
+                        # action=argparse.BooleanOptionalAction,
                         default=False,
-                        help="Enter configuration mode")
+                        help="Enter configuration mode for provided sector name")
     
     parser.add_argument("--data",
                         dest="data_file",
-                        default="data/coordinates.yml",
+                        default="data/coordinates.json",
                         help="Data file to be used with OpenCV")
     
     parser.add_argument("--debug",

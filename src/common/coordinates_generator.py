@@ -1,5 +1,6 @@
 import cv2 as open_cv
 import numpy as np
+import requests
 import json
 
 from common.colors import COLOR_WHITE
@@ -9,10 +10,12 @@ class CoordinatesGenerator:
     KEY_RESET = ord("r")
     KEY_QUIT = ord("q")
 
-    def __init__(self, image, output, color):
+    def __init__(self, image, output, sectorId, color):
         self.output = output
+        self.out_json = []
         self.caption = "Marque as vagas"
         self.color = color
+        self.sectorId = sectorId
 
         self.image = image.copy()
         self.original_image = image.copy()
@@ -31,6 +34,13 @@ class CoordinatesGenerator:
             if key == CoordinatesGenerator.KEY_RESET:
                 self.image = self.image.copy()
             elif key == CoordinatesGenerator.KEY_QUIT:
+                final_json = {"sectorId": self.sectorId, "vacancies": self.out_json}
+
+                json.dump(final_json, self.output, ensure_ascii=False)
+                
+                r = requests.post("localhost:8080/api/vacancies", json=final_json)
+                if(r.status_code != 200):
+                    print("[ERROR] Could not create parking lots!")
                 break
         open_cv.destroyWindow(self.caption)
 
@@ -87,12 +97,12 @@ class CoordinatesGenerator:
         roi_gray = grayed[rect[1]:(rect[1] + rect[3]), rect[0]:(rect[0] + rect[2])]
         laplacian = open_cv.Laplacian(roi_gray, open_cv.CV_64F)
 
-        self.output.write("-\n          id: " + str(self.ids) + "\n          coordinates: [" +
-                          "[" + str(self.coordinates[0][0]) + "," + str(self.coordinates[0][1]) + "]," +
-                          "[" + str(self.coordinates[1][0]) + "," + str(self.coordinates[1][1]) + "]," +
-                          "[" + str(self.coordinates[2][0]) + "," + str(self.coordinates[2][1]) + "]," +
-                          "[" + str(self.coordinates[3][0]) + "," + str(self.coordinates[3][1]) + "]]\n" +
-                          "          mean: " + str(np.mean(np.abs(laplacian * mask))) + "\n")
+        self.out_json.append({
+            "name": f"{self.sectorId}-{self.ids}",
+            "coordinates": str(coordinates.tolist()),
+            "status": "free",
+            "mean": np.mean(np.abs(laplacian * mask))
+        })
 
         draw_contours(self.image, coordinates, str(self.ids + 1), COLOR_WHITE)
 
