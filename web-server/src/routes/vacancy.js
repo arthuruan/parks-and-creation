@@ -21,7 +21,7 @@ router.get('/:id', async (req, res) => {
 router.get('/:id/history', async (req, res) => {
   const { id } = req.params;
 
-  const history = await VacancyHistory.findAll({ vacancyId: id });
+  const history = await VacancyHistory.findAll({ vacancy_id: id });
   res.json(history);
 });
 
@@ -29,8 +29,17 @@ router.get('/:id/history', async (req, res) => {
 router.post('/', async (req, res) => {
   const { coordinates, sectorId, status } = req.body;
 
+  const vacancy = await Vacancy.create({ coordinates, sector_id: sectorId, status });
+  await VacancyHistory.create({vacancy_id: vacancy.id, status});
+  res.status(201).json(vacancy);
+});
+
+// Rota para criar uma nova vaga
+router.post('/', async (req, res) => {
+  const { coordinates, sectorId, status } = req.body;
+
   const vacancy = await Vacancy.create({ coordinates, sectorId, status });
-  await VacancyHistory.create({vacancyId: vacancy.id, status});
+  await VacancyHistory.create({vacancy_id: vacancy.id, status});
   res.status(201).json(vacancy);
 });
 
@@ -39,7 +48,7 @@ router.put('/:id', async (req, res) => {
   const { id } = req.params;
   const { coordinates, sectorId, status } = req.body;
   const vacancy = await Vacancy.findByPk(id);
-  if (status) await VacancyHistory.create({vacancyId: id, status});
+  if (status) await VacancyHistory.create({vacancy_id: id, status});
   if (!vacancy) {
     return res.status(404).json({ error: 'Vaga não encontrada' });
   }
