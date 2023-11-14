@@ -93,7 +93,7 @@ router.patch('/:name', async (req, res) => {
 
   try {
     vacancy = await Vacancy.findOne({ where: {name} });
-    if (status) await VacancyHistory.create({vacancy_id: id, status});
+    if (status) await VacancyHistory.create({vacancy_id: vacancy.id, status});
     if (!vacancy) {
       return res.status(404).json({ error: 'Vaga não encontrada' });
     }
@@ -105,6 +105,7 @@ router.patch('/:name', async (req, res) => {
   
     await vacancy.save();
   } catch (error) {
+    console.log(error)
     res.status(404).json(error);
   }
 
