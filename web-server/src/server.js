@@ -22,7 +22,7 @@ async function initServer() {
   }
 
   // Sincronize o banco de dados e inicie o servidor
-  sequelize.sync().then(() => {
+  sequelize.sync({force: true}).then(() => {
     app.listen(3000, () => {
       console.log('Servidor em execução na porta 3000');
     });
