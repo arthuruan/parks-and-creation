@@ -8,20 +8,31 @@ def main():
 
     data_path = args.data_file
     debug = args.debug
+    host = args.host_mode
+
+    if host == False:
+        print("[ERROR] Could not find host, please send the api host as --host argument!")
+        return
 
     if args.config_mode != False:
-        initial_setup(data_path, args.config_mode)
+        initial_setup(data_path, args.config_mode, host)
         return
 
     if not os.path.isfile(data_path):
         print("[ERROR] Could not find coordinates configuration file! Run with --config {id}")
-        return   
+        return
 
-    routine(data_path, debug)
+    routine(data_path, debug, host)
 
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Generates Coordinates File')
+
+    parser.add_argument("--host",
+                        dest="host_mode",
+                        # action=argparse.BooleanOptionalAction,
+                        default=False,
+                        help="Enter host mode for provided the backend ip")
 
     parser.add_argument("--config",
                         dest="config_mode",

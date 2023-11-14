@@ -11,9 +11,10 @@ class MotionDetector:
     LAPLACIAN = 1.4
     DETECT_DELAY = 1
 
-    def __init__(self, image, parkingLotData, debug):
+    def __init__(self, image, parkingLotData, debug, host):
         self.image = image.copy()
         self.debug = debug
+        self.host = host
         self.coordinates_data = parkingLotData["vacancies"]
         self.sectorId = parkingLotData["sectorId"]
         self.occupied = []
@@ -70,7 +71,7 @@ class MotionDetector:
 
         if occupied != self.occupied:
             for pkingLot in self.coordinates_data:
-                r = requests.patch(f"http://localhost:8080/api/vacancies/{pkingLot['name']}", json={"status": "occupied" if pkingLot['name'] in occupied else "free"})
+                r = requests.patch(f"http://{self.host}:8080/api/vacancies/{pkingLot['name']}", json={"status": "occupied" if pkingLot['name'] in occupied else "free"})
                 print(r, pkingLot['name'],  "occupied" if pkingLot['name'] in occupied else "free")
                 if(r.status_code != 200):
                     print(f"[ERROR] Could not send parking spot {pkingLot['name']} data!")

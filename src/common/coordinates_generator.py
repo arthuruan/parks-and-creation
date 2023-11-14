@@ -10,12 +10,13 @@ class CoordinatesGenerator:
     KEY_RESET = ord("r")
     KEY_QUIT = ord("q")
 
-    def __init__(self, image, output, sectorId, color):
+    def __init__(self, image, output, sectorId, host, color):
         self.output = output
         self.out_json = []
         self.caption = "Marque as vagas"
         self.color = color
         self.sectorId = sectorId
+        self.host = host
 
         self.image = image.copy()
         self.original_image = image.copy()
@@ -38,7 +39,7 @@ class CoordinatesGenerator:
 
                 json.dump(final_json, self.output, ensure_ascii=False)
                 
-                r = requests.post("http://localhost:8080/api/vacancies/multiples", json=final_json)
+                r = requests.post(f"http://{self.host}:8080/api/vacancies/multiples", json=final_json)
 
                 if(r.status_code != 200):
                     print("[ERROR] Could not create parking lots!")
