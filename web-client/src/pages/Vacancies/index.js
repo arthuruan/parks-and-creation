@@ -5,7 +5,7 @@ import { Container, Section, SectionsWrapper, VacancyContainer, VacancyData, Sta
 function Vacancies(props) {
   const { vacancies, sectors } = props;
   
-  const [currentSector, setCurrentSector] = useState(sectors ? sectors[0].id : 1);
+  const [currentSector, setCurrentSector] = useState(sectors ? sectors[0]?.id : 1);
   function handleChangeSector(e) {
     setCurrentSector(parseInt(e.target.value));
   }

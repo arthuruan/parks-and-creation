@@ -31,8 +31,8 @@ router.post('/', async (req, res) => {
 
   try {
     const vacancy = await Vacancy.create({ coordinates, sector_id: sectorId, status });
-  await VacancyHistory.create({vacancy_id: vacancy.id, status});
-  res.status(201).json(vacancy);
+    await VacancyHistory.create({vacancy_id: vacancy.id, status});
+    res.status(201).json(vacancy);
   } catch (e) {
     res.status(500).json(e);
   }
