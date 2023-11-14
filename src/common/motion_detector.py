@@ -1,4 +1,6 @@
 import cv2 as open_cv
+import requests
+import json
 import numpy as np
 import logging
 from common.drawing_utils import draw_contours
@@ -9,10 +11,12 @@ class MotionDetector:
     LAPLACIAN = 1.4
     DETECT_DELAY = 1
 
-    def __init__(self, image, coordinates, debug):
+    def __init__(self, image, parkingLotData, debug):
         self.image = image.copy()
         self.debug = debug
-        self.coordinates_data = coordinates
+        self.coordinates_data = parkingLotData["vacancies"]
+        self.sectorId = parkingLotData["sectorId"]
+        self.occupied = []
         self.contours = []
         self.bounds = []
         self.mask = []
@@ -53,17 +57,25 @@ class MotionDetector:
         new_frame = self.image.copy()
         logging.debug("new_frame: %s", new_frame)
 
-        status_group = []
+        occupied = []
 
         for index, p in enumerate(coordinates_data):
             status = self.__apply(grayed, index, p)
-            status_group.append(status)
+            if(not status):
+                occupied.append(p["name"])
             coordinates = self._coordinates(p)
 
             color = COLOR_GREEN if status else COLOR_BLUE
-            draw_contours(new_frame, coordinates, str(p["id"] + 1), COLOR_WHITE, color)
+            draw_contours(new_frame, coordinates, str(p["name"]), COLOR_WHITE, color)
 
-        print('Status: ', status_group)
+        if occupied != self.occupied:
+            self.occupied = occupied
+            for pkingLot in occupied:
+                r = requests.patch(f"localhost:8080/api/vacancies/{pkingLot}", json={"status":  self.occupied})
+                if(r.status_code != 200):
+                    print(f"[ERROR] Could not send parking spot {pkingLot} data!")
+            print('Status: ', self.occupied)
+
         
         if self.debug:
             open_cv.imshow('Result', new_frame)
@@ -93,7 +105,7 @@ class MotionDetector:
 
     @staticmethod
     def _coordinates(p):
-        return np.array(p["coordinates"])
+        return np.array(json.loads(p["coordinates"]))
 
     @staticmethod
     def same_status(coordinates_status, index, status):
