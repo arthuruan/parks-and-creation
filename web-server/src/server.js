@@ -1,10 +1,12 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const sequelize = require('./db');
+const cors = require('cors');
 
 const app = express();
 
 app.use(bodyParser.json());
+app.use(cors());
 
 
 // Rotas
@@ -20,8 +22,8 @@ async function initServer() {
   }
 
   // Sincronize o banco de dados e inicie o servidor
-  sequelize.sync().then(() => {
-    app.listen(3000, () => {
+  sequelize.sync({force: true}).then(() => {
+    app.listen(8080, () => {
       console.log('Servidor em execução na porta 3000');
     });
   });

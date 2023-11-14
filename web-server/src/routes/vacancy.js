@@ -29,19 +29,23 @@ router.get('/:id/history', async (req, res) => {
 router.post('/', async (req, res) => {
   const { coordinates, sectorId, status } = req.body;
 
-  const vacancy = await Vacancy.create({ coordinates, sector_id: sectorId, status });
+  try {
+    const vacancy = await Vacancy.create({ coordinates, sector_id: sectorId, status });
   await VacancyHistory.create({vacancy_id: vacancy.id, status});
   res.status(201).json(vacancy);
+  } catch (e) {
+    res.status(500).json(e);
+  }
 });
 
-// Rota para criar uma nova vaga
-router.post('/', async (req, res) => {
-  const { coordinates, sectorId, status } = req.body;
+// // Rota para criar uma nova vaga
+// router.post('/', async (req, res) => {
+//   const { coordinates, sectorId, status } = req.body;
 
-  const vacancy = await Vacancy.create({ coordinates, sectorId, status });
-  await VacancyHistory.create({vacancy_id: vacancy.id, status});
-  res.status(201).json(vacancy);
-});
+//   const vacancy = await Vacancy.create({ coordinates, sectorId, status });
+//   await VacancyHistory.create({vacancy_id: vacancy.id, status});
+//   res.status(201).json(vacancy);
+// });
 
 // Rota para atualizar uma vaga
 router.put('/:id', async (req, res) => {
